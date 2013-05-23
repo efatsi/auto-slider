@@ -4,15 +4,18 @@ void loop();
 void updateEncoder();
 void increment();
 void decrement();
+void display();
+void setLights();
 #line 1 "src/sketch.ino"
 //From bildr article: http://bildr.org/2012/08/rotary-encoder-arduino/
 #include <DoubleCounter.h>
-#include <Counter.h>
 
 //these pins can not be changed 2/3 are special pins
 int encoderPin1 = 2;
 int encoderPin2 = 3;
-int encoderSwitchPin = 7; //push button switch
+
+int buttonPin = 7;
+int switchPin = 12;
 
 const int serialPin        = 8;
 const int registerClockPin = 9;
@@ -22,9 +25,10 @@ DoubleCounter counter(serialPin, registerClockPin, serialClockPin);
 
 volatile int lastEncoded = 0;
 
+int lights[] = {4, 5, 6};
 int values[] = {1, 2, 3};
 int mins[]   = {1, 2, 3};
-int maxes[]  = {11, 22, 99};
+int maxes[]  = {50, 70, 99};
 int position = 0;
 
 long lastencoderValue = 0;
@@ -38,17 +42,22 @@ void setup() {
 
   pinMode(encoderPin1, INPUT);
   pinMode(encoderPin2, INPUT);
-  pinMode(encoderSwitchPin, INPUT);
+  pinMode(buttonPin, INPUT);
+  pinMode(switchPin, INPUT);
 
-  digitalWrite(encoderPin1, HIGH); //turn pullup resistor on
-  digitalWrite(encoderPin2, HIGH); //turn pullup resistor on
+  // turn pullup resistors on
+  digitalWrite(encoderPin1, HIGH);
+  digitalWrite(encoderPin2, HIGH);
 
   // Multiple (and read with division) by 4 since updateEncoder()
   // increments/decrements values by 4
-  for (int i= 0; i < 3; i++) {
+  // Also set the pin mode for our indicators
+  for (int i = 0; i < 3; i++) {
     values[i] *= 4;
     mins[i]   *= 4;
     maxes[i]  *= 4;
+
+    pinMode(lights[i], OUTPUT);
   }
 
   //call updateEncoder() when any high/low changed seen
@@ -59,29 +68,34 @@ void setup() {
 }
 
 void loop() {
-  int buttonState = digitalRead(encoderSwitchPin);
-  if (buttonState == 1) {
-    counter.draw((values[position] / 4));
-  }
-  if (buttonState == 0) {
-    position = (position + 1) % 3;
-    counter.draw((values[position] / 4));
-    delay(500);
-  }
+  // if (digitalRead(switchPin) == LOW) {
+  //   noInterrupts();
+  //   counter.draw(88);
+  // }
+  // else {
+  if (true) {
+    // interrupts();
+    display();
 
+    if (digitalRead(buttonPin) == LOW) {
+      position = (position + 1) % 3;
+      display();
+      delay(250);
+    }
+  }
 }
 
 void updateEncoder() {
-  int MSB = digitalRead(encoderPin1); //MSB = most significant bit
-  int LSB = digitalRead(encoderPin2); //LSB = least significant bit
+  int MSB = digitalRead(encoderPin1);
+  int LSB = digitalRead(encoderPin2);
 
-  int encoded = (MSB << 1) | LSB; //converting the 2 pin value to single number
-  int sum  = (lastEncoded << 2) | encoded; //adding it to the previous encoded value
+  int encoded = (MSB << 1) | LSB;
+  int sum  = (lastEncoded << 2) | encoded;
 
   if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011) increment();
   if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000) decrement();
 
-  lastEncoded = encoded; //store this value for next time
+  lastEncoded = encoded;
 }
 
 void increment() {
@@ -95,5 +109,21 @@ void decrement() {
   values[position] --;
   if (values[position] < mins[position]) {
     values[position] = mins[position];
+  }
+}
+
+void display() {
+  counter.draw((values[position] / 4));
+  setLights();
+}
+
+void setLights() {
+  for (int i = 0; i < 3; i++) {
+    if (i == position) {
+      digitalWrite(lights[i], HIGH);
+    }
+    else {
+      digitalWrite(lights[i], LOW);
+    }
   }
 }

@@ -4,7 +4,9 @@
 //these pins can not be changed 2/3 are special pins
 int encoderPin1 = 2;
 int encoderPin2 = 3;
-int encoderSwitchPin = 7; //push button switch
+
+int buttonPin = 7;
+int switchPin = 12;
 
 const int serialPin        = 8;
 const int registerClockPin = 9;
@@ -31,7 +33,8 @@ void setup() {
 
   pinMode(encoderPin1, INPUT);
   pinMode(encoderPin2, INPUT);
-  pinMode(encoderSwitchPin, INPUT);
+  pinMode(buttonPin, INPUT);
+  pinMode(switchPin, INPUT);
 
   // turn pullup resistors on
   digitalWrite(encoderPin1, HIGH);
@@ -56,14 +59,20 @@ void setup() {
 }
 
 void loop() {
-  display();
-
-  if (digitalRead(encoderSwitchPin) == 0) {
-    position = (position + 1) % 3;
-    display();
-    delay(250);
+  if (digitalRead(switchPin) == HIGH) {
+    noInterrupts();
+    counter.draw(88);
   }
+  else {
+    interrupts();
+    display();
 
+    if (digitalRead(buttonPin) == LOW) {
+      position = (position + 1) % 3;
+      display();
+      delay(250);
+    }
+  }
 }
 
 void updateEncoder() {
