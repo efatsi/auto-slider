@@ -6,46 +6,54 @@ void increment();
 void decrement();
 void display();
 void setLights();
+void moveIt();
+void step();
+void wait();
 #line 1 "src/sketch.ino"
-//From bildr article: http://bildr.org/2012/08/rotary-encoder-arduino/
 #include <DoubleCounter.h>
-
-//these pins can not be changed 2/3 are special pins
-int encoderPin1 = 2;
-int encoderPin2 = 3;
-
-int buttonPin = 7;
-int switchPin = 12;
+#include <Servo.h>
 
 const int serialPin        = 8;
 const int registerClockPin = 9;
 const int serialClockPin   = 10;
 
+const int servoPin = 5;
+
 DoubleCounter counter(serialPin, registerClockPin, serialClockPin);
+Servo servo;
+
+int encoderPin1 = 2;
+int encoderPin2 = 3;
+
+int buttonPin = 6;
+int switchPin = 7;
 
 volatile int lastEncoded = 0;
-
-int lights[] = {4, 5, 6};
-int values[] = {1, 2, 3};
-int mins[]   = {1, 2, 3};
-int maxes[]  = {50, 70, 99};
-int position = 0;
-
-long lastencoderValue = 0;
+long lastencoderValue    = 0;
 
 int lastMSB = 0;
 int lastLSB = 0;
 
+// timeInterval, distanceInterval, numberOfSteps
+int lights[] = {11, 12, 13};
+int values[] = {1, 1, 0};
+int mins[]   = {1, 1, 1};
+int maxes[]  = {99, 10, 99};
+int position = 0;
+
+long stepStart;
+
 void setup() {
   Serial.begin (9600);
   counter.init();
+
+  servo.attach(servoPin);
 
   pinMode(encoderPin1, INPUT);
   pinMode(encoderPin2, INPUT);
   pinMode(buttonPin, INPUT);
   pinMode(switchPin, INPUT);
 
-  // turn pullup resistors on
   digitalWrite(encoderPin1, HIGH);
   digitalWrite(encoderPin2, HIGH);
 
@@ -60,21 +68,23 @@ void setup() {
     pinMode(lights[i], OUTPUT);
   }
 
-  //call updateEncoder() when any high/low changed seen
-  //on interrupt 0 (pin 2), or interrupt 1 (pin 3)
   attachInterrupt(0, updateEncoder, CHANGE);
   attachInterrupt(1, updateEncoder, CHANGE);
 
 }
 
 void loop() {
-  // if (digitalRead(switchPin) == LOW) {
-  //   noInterrupts();
-  //   counter.draw(88);
-  // }
-  // else {
-  if (true) {
-    // interrupts();
+  if (digitalRead(switchPin) == HIGH) {
+    Serial.println("begin");
+    moveIt();
+    Serial.println("done");
+    while (digitalRead(switchPin) == HIGH) {
+      Serial.println(digitalRead(switchPin));
+    }
+    Serial.println("continue");
+    delay(2000);
+  }
+  else {
     display();
 
     if (digitalRead(buttonPin) == LOW) {
@@ -126,4 +136,28 @@ void setLights() {
       digitalWrite(lights[i], LOW);
     }
   }
+}
+
+void moveIt() {
+  int numberOfSteps = (values[2] / 4);
+  for (int i = 0; i < numberOfSteps; i++) {
+    stepStart = millis();
+    Serial.println("step");
+    step();
+    if (i != numberOfSteps - 1) {
+      wait();
+    }
+  }
+}
+
+void step() {
+  servo.write(100);
+  delay(400);
+  servo.write(93);
+}
+
+void wait() {
+  Serial.print("waiting for: ");
+  Serial.println((values[0] / 4));
+  while(millis() - stepStart < (values[0] / 4) * 1000) {}
 }

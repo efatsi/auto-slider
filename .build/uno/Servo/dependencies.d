@@ -1,4 +1,5 @@
-.build/uno/src/sketch.d .build/uno/src/sketch.o: .build/uno/src/sketch.cpp \
+.build/uno/Servo/Servo.d .build/uno/Servo/Servo.o:  \
+ /Applications/Arduino.app/Contents/Resources/Java/libraries/Servo/Servo.cpp \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/Arduino.h \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/binary.h \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/WCharacter.h \
@@ -9,5 +10,4 @@
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/Printable.h \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/new.h \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/variants/standard/pins_arduino.h \
-  lib/DoubleCounter/DoubleCounter.h \
   /Applications/Arduino.app/Contents/Resources/Java/libraries/Servo/Servo.h
