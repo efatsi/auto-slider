@@ -67,7 +67,6 @@ void loop() {
     moveIt();
     Serial.println("done");
     while (digitalRead(switchPin) == HIGH) {
-      Serial.println(digitalRead(switchPin));
     }
     Serial.println("continue");
     delay(2000);
