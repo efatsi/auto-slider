@@ -1,3 +1,11 @@
+.build/uno/arduino/avr-libc/malloc.d .build/uno/arduino/avr-libc/malloc.o:  \
+ /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/avr-libc/malloc.c \
+  /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/avr-libc/sectionname.h \
+  /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/avr-libc/stdlib_private.h
+.build/uno/arduino/avr-libc/realloc.d .build/uno/arduino/avr-libc/realloc.o:  \
+ /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/avr-libc/realloc.c \
+  /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/avr-libc/sectionname.h \
+  /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/avr-libc/stdlib_private.h
 .build/uno/arduino/CDC.d .build/uno/arduino/CDC.o:  \
  /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/CDC.cpp \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/Platform.h \
@@ -66,8 +74,6 @@
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/Printable.h \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/new.h \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/variants/standard/pins_arduino.h
-.build/uno/arduino/malloc.d .build/uno/arduino/malloc.o:  \
- /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/malloc.c
 .build/uno/arduino/new.d .build/uno/arduino/new.o:  \
  /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/new.cpp \
   /Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino/new.h

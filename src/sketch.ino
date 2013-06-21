@@ -23,7 +23,7 @@ int lastMSB = 0;
 int lastLSB = 0;
 
 // timeInterval, distanceInterval, numberOfSteps
-int lights[] = {11, 12, 13};
+int lights[] = {12, 11, 4};
 int values[] = {1, 1, 0};
 int mins[]   = {1, 1, 1};
 int maxes[]  = {99, 10, 99};
@@ -31,8 +31,9 @@ int position = 0;
 
 long stepStart;
 
+int greenLight = 13;
+
 void setup() {
-  Serial.begin (9600);
   counter.init();
 
   servo.attach(servoPin);
@@ -56,6 +57,8 @@ void setup() {
     pinMode(lights[i], OUTPUT);
   }
 
+  pinMode(greenLight, OUTPUT);
+
   attachInterrupt(0, updateEncoder, CHANGE);
   attachInterrupt(1, updateEncoder, CHANGE);
 
@@ -63,13 +66,13 @@ void setup() {
 
 void loop() {
   if (digitalRead(switchPin) == HIGH) {
-    Serial.println("begin");
+    turnOnGreenLight();
     moveIt();
-    Serial.println("done");
+    digitalWrite(greenLight, LOW);
+    counter.draw(0);
     while (digitalRead(switchPin) == HIGH) {
     }
-    Serial.println("continue");
-    delay(2000);
+    delay(500);
   }
   else {
     display();
@@ -127,11 +130,11 @@ void setLights() {
 
 void moveIt() {
   int numberOfSteps = (values[2] / 4);
-  for (int i = 0; i < numberOfSteps; i++) {
+  for (int i = numberOfSteps; i > 0; i--) {
     stepStart = millis();
-    Serial.println("step");
+    counter.draw(i);
     step();
-    if (i != numberOfSteps - 1) {
+    if (i != 1) {
       wait();
     }
   }
@@ -144,7 +147,12 @@ void step() {
 }
 
 void wait() {
-  Serial.print("waiting for: ");
-  Serial.println((values[0] / 4));
   while(millis() - stepStart < (values[0] / 4) * 1000) {}
+}
+
+void turnOnGreenLight() {
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(lights[i], LOW);
+  }
+  digitalWrite(greenLight, HIGH);
 }
