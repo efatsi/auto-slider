@@ -8,6 +8,7 @@ void display();
 void setLights();
 void moveIt();
 void step();
+int distanceInterval();
 void wait();
 void turnOnGreenLight();
 #line 1 "src/sketch.ino"
@@ -59,10 +60,10 @@ void setup() {
   digitalWrite(encoderPin1, HIGH);
   digitalWrite(encoderPin2, HIGH);
 
-  // Multiple (and read with division) by 4 since updateEncoder()
-  // increments/decrements values by 4
-  // Also set the pin mode for our indicators
   for (int i = 0; i < 3; i++) {
+    // Multiply by 4 since updateEncoder()
+    // increments/decrements values by 4
+    // (read with division)
     values[i] *= 4;
     mins[i]   *= 4;
     maxes[i]  *= 4;
@@ -154,9 +155,13 @@ void moveIt() {
 }
 
 void step() {
-  servo.write(100);
+  servo.write(distanceInterval());
   delay(400);
   servo.write(93);
+}
+
+int distanceInterval() {
+  return (97 + (values[1] / 4));
 }
 
 void wait() {
