@@ -36,11 +36,11 @@ long lastencoderValue    = 0;
 int lastMSB = 0;
 int lastLSB = 0;
 
-// timeInterval, distanceInterval, numberOfSteps
+// timeInterval, distanceInterval, reverse
 int lights[] = {12, 11, 4};
 int values[] = {1, 1, 0};
-int mins[]   = {1, 1, 1};
-int maxes[]  = {99, 10, 99};
+int mins[]   = {1, 1, 0};
+int maxes[]  = {99, 10, 1};
 int position = 0;
 
 long stepStart;
@@ -83,10 +83,6 @@ void loop() {
     turnOnGreenLight();
     moveIt();
     digitalWrite(greenLight, LOW);
-    counter.draw(0);
-    while (digitalRead(switchPin) == HIGH) {
-    }
-    delay(500);
   }
   else {
     display();
@@ -143,25 +139,27 @@ void setLights() {
 }
 
 void moveIt() {
-  int numberOfSteps = (values[2] / 4);
-  for (int i = numberOfSteps; i > 0; i--) {
+  while (digitalRead(switchPin) == HIGH) {
     stepStart = millis();
-    counter.draw(i);
     step();
-    if (i != 1) {
-      wait();
-    }
+    wait();
   }
 }
 
 void step() {
-  servo.write(distanceInterval());
+  int reverse = (values[2] / 4);
+  if (reverse == 0) {
+    servo.write(92 + distanceInterval());
+  }
+  else {
+    servo.write(93 - distanceInterval());
+  }
   delay(400);
   servo.write(93);
 }
 
 int distanceInterval() {
-  return (97 + (values[1] / 4));
+  return 5 + (values[1] / 4);
 }
 
 void wait() {
